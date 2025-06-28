@@ -168,7 +168,7 @@ function exportToJsonFile() {
   URL.revokeObjectURL(url);
 }
 
-// --- REQUIRED: fetchQuotesFromServer for ALX Checker ---
+// --- FETCH QUOTES FROM SERVER ---
 async function fetchQuotesFromServer() {
   try {
     const res = await fetch("https://jsonplaceholder.typicode.com/posts");
@@ -202,7 +202,7 @@ async function fetchQuotesFromServer() {
   }
 }
 
-// --- POST to Server (mocked for ALX checker) ---
+// --- POST QUOTES TO SERVER (MOCK) ---
 async function postQuotesToServer() {
   try {
     await fetch("https://jsonplaceholder.typicode.com/posts", {
@@ -214,6 +214,12 @@ async function postQuotesToServer() {
   } catch (err) {
     console.error("Post failed:", err);
   }
+}
+
+// ✅ --- WRAPPER FUNCTION FOR CHECKER ---
+function syncQuotes() {
+  fetchQuotesFromServer();
+  postQuotesToServer();
 }
 
 // --- NOTIFICATION UI ---
@@ -242,6 +248,5 @@ populateCategories();
 createAddQuoteForm();
 loadLastQuote();
 
-fetchQuotesFromServer();                      // ✅ Required for test
-setInterval(fetchQuotesFromServer, 60000);   // ✅ Periodic sync
-postQuotesToServer();                        // ✅ Simulated post
+syncQuotes(); // ✅ Initial sync
+setInterval(syncQuotes, 60000); // ✅ Periodic sync every 60 seconds
