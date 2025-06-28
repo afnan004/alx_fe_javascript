@@ -66,8 +66,8 @@ function addQuote() {
     document.getElementById("newQuoteCategory").value = "";
     alert("Quote added!");
 
-    saveQuotes(); 
-    populateCategories(); // refresh dropdown
+    saveQuotes();
+    populateCategories();
   } else {
     alert("Please fill in both fields.");
   }
@@ -87,10 +87,10 @@ function populateCategories() {
   });
 
   categoryFilter.value = selected;
-  filterQuote(); // now using the exact name the test expects
+  filterQuote();
 }
 
-// --- FILTER QUOTES FUNCTION (renamed for test) ---
+// --- FILTER QUOTES FUNCTION ---
 function filterQuote() {
   const selected = categoryFilter.value;
   localStorage.setItem("selectedCategory", selected);
@@ -104,7 +104,6 @@ function filterQuote() {
     return;
   }
 
-  // Only show the first quote (to match earlier behavior)
   quoteDisplay.textContent = filteredQuotes[0].text;
 }
 
@@ -169,11 +168,66 @@ function exportToJsonFile() {
   URL.revokeObjectURL(url);
 }
 
-// --- INIT ---
+// --- SYNC WITH SERVER ---
+async function syncWithServer() {
+  try {
+    const res = await fetch("https://jsonplaceholder.typicode.com/posts");
+    const data = await res.json();
+
+    // Simulate server quote structure: use first 10 for brevity
+    const serverQuotes = data.slice(0, 10).map(post => ({
+      text: post.title,
+      category: "server"
+    }));
+
+    let updatesMade = false;
+
+    // Conflict resolution: server wins
+    serverQuotes.forEach(serverQuote => {
+      const local = quotes.find(q => q.text === serverQuote.text);
+      if (!local) {
+        quotes.push(serverQuote);
+        updatesMade = true;
+      } else if (local.category !== serverQuote.category) {
+        local.category = serverQuote.category;
+        updatesMade = true;
+      }
+    });
+
+    if (updatesMade) {
+      saveQuotes();
+      populateCategories();
+      showNotification("Quotes synced from server (conflicts resolved).");
+    }
+  } catch (e) {
+    console.error("Failed to sync with server:", e);
+  }
+}
+
+// --- NOTIFICATION UI ---
+function showNotification(message) {
+  const note = document.createElement("div");
+  note.textContent = message;
+  note.style.position = "fixed";
+  note.style.bottom = "20px";
+  note.style.right = "20px";
+  note.style.padding = "10px 15px";
+  note.style.backgroundColor = "#333";
+  note.style.color = "#fff";
+  note.style.borderRadius = "5px";
+  note.style.zIndex = 1000;
+  document.body.appendChild(note);
+
+  setTimeout(() => note.remove(), 4000);
+}
+
+// --- INITIALIZATION ---
 newQuoteBtn.addEventListener("click", showRandomQuote);
-categoryFilter.addEventListener("change", filterQuote); // also trigger filter
+categoryFilter.addEventListener("change", filterQuote);
 
 loadQuotesFromStorage();
 populateCategories();
 createAddQuoteForm();
 loadLastQuote();
+syncWithServer(); // initial sync
+setInterval(syncWithServer, 60000); // periodic sync every 60 seconds
