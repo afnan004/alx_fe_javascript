@@ -62,36 +62,53 @@ function addQuote() {
   if (text && category) {
     quotes.push({ text, category });
 
-    const existingCategories = [...categoryFilter.options].map(opt => opt.value);
-    if (!existingCategories.includes(category)) {
-      const option = document.createElement("option");
-      option.value = category;
-      option.innerText = category;
-      categoryFilter.appendChild(option);
-    }
-
     document.getElementById("newQuoteText").value = "";
     document.getElementById("newQuoteCategory").value = "";
     alert("Quote added!");
 
-    saveQuotes(); // save to localStorage
+    saveQuotes(); 
+    populateCategories(); // refresh dropdown if category is new
   } else {
     alert("Please fill in both fields.");
   }
 }
 
-// --- CATEGORY DROPDOWN SETUP ---
+// --- POPULATE CATEGORY FILTER ---
 function populateCategories() {
-  const uniqueCategories = new Set(quotes.map(q => q.category));
+  const selected = localStorage.getItem("selectedCategory") || "all";
+  categoryFilter.innerHTML = `<option value="all">All Categories</option>`;
+
+  const uniqueCategories = [...new Set(quotes.map(q => q.category))];
   uniqueCategories.forEach(category => {
     const option = document.createElement("option");
     option.value = category;
     option.innerText = category;
     categoryFilter.appendChild(option);
   });
+
+  categoryFilter.value = selected;
+  filterQuotes(); // apply current filter on load
 }
 
-// --- LOCAL STORAGE ---
+// --- FILTER QUOTES BASED ON CATEGORY ---
+function filterQuotes() {
+  const selected = categoryFilter.value;
+  localStorage.setItem("selectedCategory", selected);
+
+  const filteredQuotes = selected === "all"
+    ? quotes
+    : quotes.filter(q => q.category === selected);
+
+  if (filteredQuotes.length === 0) {
+    quoteDisplay.innerHTML = "No quotes in this category.";
+    return;
+  }
+
+  const list = filteredQuotes.map(q => `<p>${q.text}</p>`).join("");
+  quoteDisplay.innerHTML = list;
+}
+
+// --- LOCAL STORAGE FUNCTIONS ---
 function loadQuotesFromStorage() {
   const storedQuotes = localStorage.getItem("quotes");
   if (storedQuotes) {
@@ -126,6 +143,7 @@ function importFromJsonFile(event) {
       if (Array.isArray(importedQuotes)) {
         quotes.push(...importedQuotes);
         saveQuotes();
+        populateCategories();
         alert("Quotes imported successfully!");
       } else {
         alert("Invalid file format.");

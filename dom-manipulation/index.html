@@ -10,8 +10,8 @@
 
   <!-- Category Filter -->
   <label for="categoryFilter">Choose a category:</label>
-  <select id="categoryFilter">
-    <option value="all">All</option>
+  <select id="categoryFilter" onchange="filterQuotes()">
+    <option value="all">All Categories</option>
   </select>
 
   <!-- Displayed Quote -->
@@ -27,11 +27,7 @@
 
   <!-- Import / Export Section -->
   <h3>Import / Export Quotes</h3>
-
-  <!-- Import input -->
   <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
-
-  <!-- Export button with required exact text -->
   <button onclick="exportToJsonFile()">Export Quotes</button>
 
   <script src="script.js"></script>
