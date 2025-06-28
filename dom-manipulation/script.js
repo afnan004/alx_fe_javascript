@@ -8,18 +8,34 @@ const quoteDisplay = document.getElementById("quoteDisplay");
 const newQuoteBtn = document.getElementById("newQuote");
 const categoryFilter = document.getElementById("categoryFilter");
 
-// Populate category dropdown
-function populateCategories() {
-  const uniqueCategories = new Set(quotes.map(q => q.category));
-  uniqueCategories.forEach(category => {
-    const option = document.createElement("option");
-    option.value = category;
-    option.innerText = category;
-    categoryFilter.appendChild(option);
-  });
+// ✅ Create the form dynamically
+function createAddQuoteForm() {
+  const formContainer = document.getElementById("quoteFormContainer");
+
+  const heading = document.createElement("h3");
+  heading.innerText = "Add a New Quote";
+
+  const quoteInput = document.createElement("input");
+  quoteInput.id = "newQuoteText";
+  quoteInput.type = "text";
+  quoteInput.placeholder = "Enter a new quote";
+
+  const categoryInput = document.createElement("input");
+  categoryInput.id = "newQuoteCategory";
+  categoryInput.type = "text";
+  categoryInput.placeholder = "Enter quote category";
+
+  const addButton = document.createElement("button");
+  addButton.innerText = "Add Quote";
+  addButton.addEventListener("click", addQuote);
+
+  formContainer.appendChild(heading);
+  formContainer.appendChild(quoteInput);
+  formContainer.appendChild(categoryInput);
+  formContainer.appendChild(addButton);
 }
 
-// ✅ Function must be named exactly this:
+// ✅ Show a random quote
 function showRandomQuote() {
   const selectedCategory = categoryFilter.value;
   const filteredQuotes = selectedCategory === "all"
@@ -35,7 +51,7 @@ function showRandomQuote() {
   quoteDisplay.innerHTML = filteredQuotes[randomIndex].text;
 }
 
-// ✅ Also required
+// ✅ Add a new quote
 function addQuote() {
   const text = document.getElementById("newQuoteText").value.trim();
   const category = document.getElementById("newQuoteCategory").value.trim();
@@ -59,8 +75,19 @@ function addQuote() {
   }
 }
 
-// ✅ Event listener for the button
-newQuoteBtn.addEventListener("click", showRandomQuote);
+// ✅ Populate categories dropdown
+function populateCategories() {
+  const uniqueCategories = new Set(quotes.map(q => q.category));
+  uniqueCategories.forEach(category => {
+    const option = document.createElement("option");
+    option.value = category;
+    option.innerText = category;
+    categoryFilter.appendChild(option);
+  });
+}
 
-// Initialize on load
+// ✅ Setup
+newQuoteBtn.addEventListener("click", showRandomQuote);
 populateCategories();
+createAddQuoteForm(); // Call this to build the form on page load
+
