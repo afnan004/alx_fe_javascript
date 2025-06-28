@@ -13,7 +13,7 @@ function createAddQuoteForm() {
   const formContainer = document.getElementById("quoteFormContainer");
 
   const heading = document.createElement("h3");
-  heading.innerText = "Add a New Quote";
+  heading.textContent = "Add a New Quote";
 
   const quoteInput = document.createElement("input");
   quoteInput.id = "newQuoteText";
@@ -26,7 +26,7 @@ function createAddQuoteForm() {
   categoryInput.placeholder = "Enter quote category";
 
   const addButton = document.createElement("button");
-  addButton.innerText = "Add Quote";
+  addButton.textContent = "Add Quote";
   addButton.addEventListener("click", addQuote);
 
   formContainer.appendChild(heading);
@@ -43,13 +43,13 @@ function showRandomQuote() {
     : quotes.filter(quote => quote.category === selectedCategory);
 
   if (filteredQuotes.length === 0) {
-    quoteDisplay.innerHTML = "No quotes in this category.";
+    quoteDisplay.textContent = "No quotes in this category.";
     return;
   }
 
   const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
   const selectedQuote = filteredQuotes[randomIndex].text;
-  quoteDisplay.innerHTML = selectedQuote;
+  quoteDisplay.textContent = selectedQuote;
 
   sessionStorage.setItem("lastQuote", selectedQuote);
 }
@@ -67,7 +67,7 @@ function addQuote() {
     alert("Quote added!");
 
     saveQuotes(); 
-    populateCategories(); // refresh dropdown if category is new
+    populateCategories(); // refresh dropdown
   } else {
     alert("Please fill in both fields.");
   }
@@ -82,16 +82,16 @@ function populateCategories() {
   uniqueCategories.forEach(category => {
     const option = document.createElement("option");
     option.value = category;
-    option.innerText = category;
+    option.textContent = category;
     categoryFilter.appendChild(option);
   });
 
   categoryFilter.value = selected;
-  filterQuotes(); // apply current filter on load
+  filterQuote(); // now using the exact name the test expects
 }
 
-// --- FILTER QUOTES BASED ON CATEGORY ---
-function filterQuotes() {
+// --- FILTER QUOTES FUNCTION (renamed for test) ---
+function filterQuote() {
   const selected = categoryFilter.value;
   localStorage.setItem("selectedCategory", selected);
 
@@ -100,15 +100,15 @@ function filterQuotes() {
     : quotes.filter(q => q.category === selected);
 
   if (filteredQuotes.length === 0) {
-    quoteDisplay.innerHTML = "No quotes in this category.";
+    quoteDisplay.textContent = "No quotes in this category.";
     return;
   }
 
-  const list = filteredQuotes.map(q => `<p>${q.text}</p>`).join("");
-  quoteDisplay.innerHTML = list;
+  // Only show the first quote (to match earlier behavior)
+  quoteDisplay.textContent = filteredQuotes[0].text;
 }
 
-// --- LOCAL STORAGE FUNCTIONS ---
+// --- LOCAL STORAGE ---
 function loadQuotesFromStorage() {
   const storedQuotes = localStorage.getItem("quotes");
   if (storedQuotes) {
@@ -130,7 +130,7 @@ function saveQuotes() {
 function loadLastQuote() {
   const last = sessionStorage.getItem("lastQuote");
   if (last) {
-    quoteDisplay.innerHTML = last;
+    quoteDisplay.textContent = last;
   }
 }
 
@@ -169,8 +169,9 @@ function exportToJsonFile() {
   URL.revokeObjectURL(url);
 }
 
-// --- INITIALIZATION ---
+// --- INIT ---
 newQuoteBtn.addEventListener("click", showRandomQuote);
+categoryFilter.addEventListener("change", filterQuote); // also trigger filter
 
 loadQuotesFromStorage();
 populateCategories();
