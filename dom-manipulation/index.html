@@ -11,4 +11,29 @@
   <!-- Category Filter -->
   <label for="categoryFilter">Choose a category:</label>
   <select id="categoryFilter">
-    <option value="all">All</o
+    <option value="all">All</option>
+  </select>
+
+  <!-- Displayed Quote -->
+  <div id="quoteDisplay" style="margin: 20px 0;"></div>
+
+  <!-- Show Random Quote Button -->
+  <button id="newQuote">Show New Quote</button>
+
+  <!-- Form placeholder -->
+  <div id="quoteFormContainer" style="margin-top: 30px;"></div>
+
+  <hr />
+
+  <!-- Import / Export Section -->
+  <h3>Import / Export Quotes</h3>
+
+  <!-- Import input -->
+  <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
+
+  <!-- Export button with required exact text -->
+  <button onclick="exportToJsonFile()">Export Quotes</button>
+
+  <script src="script.js"></script>
+</body>
+</html>
