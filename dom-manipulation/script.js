@@ -8,7 +8,7 @@ const quoteDisplay = document.getElementById("quoteDisplay");
 const newQuoteBtn = document.getElementById("newQuote");
 const categoryFilter = document.getElementById("categoryFilter");
 
-// Populate initial categories
+// Populate category dropdown
 function populateCategories() {
   const uniqueCategories = new Set(quotes.map(q => q.category));
   uniqueCategories.forEach(category => {
@@ -19,8 +19,8 @@ function populateCategories() {
   });
 }
 
-// Show a random quote
-function displayRandomQuote() {
+// ✅ Function must be named exactly this:
+function showRandomQuote() {
   const selectedCategory = categoryFilter.value;
   const filteredQuotes = selectedCategory === "all"
     ? quotes
@@ -35,7 +35,7 @@ function displayRandomQuote() {
   quoteDisplay.innerHTML = filteredQuotes[randomIndex].text;
 }
 
-// Add a new quote
+// ✅ Also required
 function addQuote() {
   const text = document.getElementById("newQuoteText").value.trim();
   const category = document.getElementById("newQuoteCategory").value.trim();
@@ -43,7 +43,6 @@ function addQuote() {
   if (text && category) {
     quotes.push({ text, category });
 
-    // Add category if not already in dropdown
     const existingCategories = [...categoryFilter.options].map(opt => opt.value);
     if (!existingCategories.includes(category)) {
       const option = document.createElement("option");
@@ -54,14 +53,14 @@ function addQuote() {
 
     document.getElementById("newQuoteText").value = "";
     document.getElementById("newQuoteCategory").value = "";
-    alert("Quote added successfully!");
+    alert("Quote added!");
   } else {
-    alert("Please enter both quote and category.");
+    alert("Please fill in both fields.");
   }
 }
 
-// Event listener
-newQuoteBtn.addEventListener("click", displayRandomQuote);
+// ✅ Event listener for the button
+newQuoteBtn.addEventListener("click", showRandomQuote);
 
-// Initialize categories on load
+// Initialize on load
 populateCategories();
