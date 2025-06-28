@@ -195,6 +195,16 @@ async function fetchQuotesFromServer() {
     if (updated) {
       saveQuotes();
       populateCategories();
+      showNotification("Quotes synced with server!"); // ✅ exact text required
+    }
+  } catch (err) {
+    console.error("Fetch failed:", err);
+  }
+}
+
+    if (updated) {
+      saveQuotes();
+      populateCategories();
       showNotification("Synced with server. Conflicts resolved (server wins).");
     }
   } catch (err) {
